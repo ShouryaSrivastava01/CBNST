@@ -1,48 +1,46 @@
 #include<stdio.h>
-int main()
-{
-    int i,j,k,n;
-    float A[20][20],c,x[10],sum=0.0;
-    printf("\nEnter the order of matrix: ");
-    scanf("%d",&n);
-    printf("\nEnter the elements of augmented matrix row-wise:\n\n");
-    for(i=1; i<=n; i++)
-    {
-        for(j=1; j<=(n+1); j++)
-        {
-            printf("A[%d][%d] : ", i,j);
-            scanf("%f",&A[i][j]);
-        }
+
+int main(){
+    int n;
+    printf("Enter the no of unknowns : ");
+    scanf("%d", &n);
+
+    float ag[n][n+1], ratio;
+
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n+1;j++)
+            scanf("%f", &ag[i][j]);
+        
     }
-    for(j=1; j<=n; j++) 
-    {
-        for(i=1; i<=n; i++)
-        {
-            if(i>j)
-            {
-                c=A[i][j]/A[j][j];
-                for(k=1; k<=n+1; k++)
-                {
-                    A[i][k]=A[i][k]-c*A[j][k];
+
+    // creating upper triangular matrix
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n;j++){
+            if(j>i){
+                ratio = ag[j][i]/ ag[i][i];
+                for(int k=0;k<n+1;k++){
+                    ag[j][k] -= ratio*ag[i][k];
                 }
             }
+            
         }
     }
-    x[n]=A[n][n+1]/A[n][n];
-    /* this loop is for backward substitution*/
-    for(i=n-1; i>=1; i--)
-    {
-        sum=0;
-        for(j=i+1; j<=n; j++)
-        {
-            sum=sum+A[i][j]*x[j];
+    float value[n], sum;
+    value[n-1] = ag[n-1][n]/ ag[n-1][n-1];
+    for(int i=n-2;i>=0;i--){
+        sum = 0;
+        for(int j=i+1;j<n;j++){
+            sum+=ag[i][j]*value[j];
         }
-        x[i]=(A[i][n+1]-sum)/A[i][i];
+        value[i] = (ag[i][n]- sum)/ ag[i][i];
     }
-    printf("\nThe solution is: \n");
-    for(i=1; i<=n; i++)
-    {
-        printf("\nx%d=%.4f\t",i,x[i]);
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n+1;j++)
+            printf("%.2f ", ag[i][j]);
+        printf("\n");
     }
-    return(0);
+
+    for(int i=0;i<n;i++){
+        printf("%.2f\t", value[i]);
+    }
 }
